@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Insert title here</title>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+ <style>
+table {
+    width:100%;
+}
+img{
+	width: 80px;
+	height: 80px;
+}
+.tweetimage{
+	width:150px;
+	height: 100px;
+	float: right;
+	position: relative;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table#t01 tr:nth-child(even) {
+    background-color: #eee;
+}
+table#t01 tr:nth-child(odd) {
+   background-color:#fff;
+}
+table#t01 th {
+    background-color: black;
+    color: white;
+}
+input{
+	float: right;
+	margin-bottom: 2%;
+}
+h1{
+text-align: center;
+}
+</style>
+</head>
+<body>
+<h1>Salesforce Twitter Feed Reader</h1>
+<div ng-app="myApp" ng-controller="myCtrl">
+<input type="text" ng-model="searchKeyword">
+<table>
+<tr>
+<th>Name</th>
+<th>Screen Name</th>
+<th>Profile background Image</th>
+<th>Text</th>
+<th>Retweet Count</th>
+<th>Created Date</th>
+</tr>
+	<tr ng-repeat="feed in apiResponse | filter:{'text':searchKeyword}">
+    	<td>{{ feed.user.name }}</td>
+    	<td>{{ feed.user.screen_name }}</td>
+    	<td><img ng-src="{{ feed.user.profile_image_url }}"></img></td>
+    	<td>{{ feed.text }} <br/>
+    		<img class="tweetimage" ng-src="{{ feed.entities.media[0].media_url }}"></img>
+    	</td>
+    	<td>{{ feed.retweet_count }}</td>
+    	<td>{{ feed.created_at }}</td>
+  	</tr>
+</table>
+</div>
+
+
+<script>
+var app = angular.module("myApp", []);
+app.controller("myCtrl", function($scope,$http) {
+	
+	 $http.get("http://localhost:8080/TwitterFeedApp-Web/TwitterFeedBaseServlet")
+	    .then(function(response) {
+	        $scope.apiResponse=response.data;
+	    }, function(error){
+         console.log(error); //
+     }) ; 
+});
+</script>
+
+</body>
+</html>
